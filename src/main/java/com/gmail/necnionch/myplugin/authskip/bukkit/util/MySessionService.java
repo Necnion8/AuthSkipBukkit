@@ -7,6 +7,7 @@ import com.mojang.authlib.minecraft.BaseMinecraftSessionService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import org.bukkit.Server;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -44,6 +45,10 @@ public class MySessionService extends YggdrasilMinecraftSessionService {
     // FIXME: 1.8.8 には InetAddress 引数がない
     @Override
     public GameProfile hasJoinedServer(GameProfile user, String serverId, InetAddress address) throws AuthenticationUnavailableException {
+        System.out.println("hasJoinedServer");
+        System.out.println(user.getName());
+        System.out.println(user.getId());
+        System.out.println(serverId);
         return super.hasJoinedServer(user, serverId, address);
     }
 
@@ -60,6 +65,7 @@ public class MySessionService extends YggdrasilMinecraftSessionService {
 
     private static MySessionService create(Object minecraftServer) throws RuntimeException {
         Field sessionServiceField = Arrays.stream(minecraftServer.getClass().getSuperclass().getDeclaredFields())
+                .peek(f -> System.out.println(f.getName() + " | " + f.getType().getSimpleName()))
                 .filter(f -> MinecraftSessionService.class.equals(f.getType()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unable to find session service field in MinecraftServer class"));
