@@ -1,0 +1,4 @@
+name: AuthSkipBukkit
+version: '${version}'
+main: com.gmail.necnionch.myplugin.authskip.bukkit.AuthSkipPlugin
+api-version: '1.13'
