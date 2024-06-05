@@ -48,8 +48,18 @@ public class MySessionService extends YggdrasilMinecraftSessionService {
     }
 
 
-    public static MySessionService create(Object minecraftServer) throws RuntimeException {
-        Field sessionServiceField = Arrays.stream(minecraftServer.getClass().getDeclaredFields())
+    public static MySessionService create(Server server) throws RuntimeException {
+        Object minecraftServer;
+        try {
+            minecraftServer = server.getClass().getMethod("getServer").invoke(server);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Unable to get MinecraftServer", e);
+        }
+        return create(minecraftServer);
+    }
+
+    private static MySessionService create(Object minecraftServer) throws RuntimeException {
+        Field sessionServiceField = Arrays.stream(minecraftServer.getClass().getSuperclass().getDeclaredFields())
                 .filter(f -> MinecraftSessionService.class.equals(f.getType()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unable to find session service field in MinecraftServer class"));
